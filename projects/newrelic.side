@@ -1,0 +1,78 @@
+{
+  "id": "4d29bd59-3093-4ef9-b219-d385cb757d86",
+  "version": "2.0",
+  "name": "newrelic",
+  "url": "https://newrelic.com",
+  "tests": [{
+    "id": "ddc74f91-d977-4ad7-bb67-579d5aef4fd1",
+    "name": "newrelic",
+    "commands": [{
+      "id": "632beb64-bcae-4edf-a20f-9b5ea222c0b0",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "3fc3d7f3-f590-45aa-96ab-d811dda51836",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1680x940",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "d339c687-761f-4ffd-806f-e06ed1a58ac7",
+      "comment": "",
+      "command": "click",
+      "target": "css=.hidden > .js-header-search-trigger svg",
+      "targets": [
+        ["css=.hidden > .js-header-search-trigger svg", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "767b7c24-6c9a-45e3-903a-65171bd83757",
+      "comment": "",
+      "command": "type",
+      "target": "id=header-search",
+      "targets": [
+        ["id=header-search", "id"],
+        ["name=search", "name"],
+        ["css=#header-search", "css:finder"],
+        ["xpath=//input[@id='header-search']", "xpath:attributes"],
+        ["xpath=//div[@id='header-search-form']/div/form/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "synthetics"
+    }, {
+      "id": "fba48839-92aa-4fde-8eb1-ae2d470ad90d",
+      "comment": "",
+      "command": "click",
+      "target": "css=.js-search-form-submit svg",
+      "targets": [
+        ["css=.js-search-form-submit svg", "css:finder"]
+      ],
+      "value": ""
+    }, {
+      "id": "9d5574df-2bc5-4a1a-80c9-4aef50372639",
+      "comment": "",
+      "command": "click",
+      "target": "css=.st-app-result:nth-child(1) .st-app-result__title",
+      "targets": [
+        ["css=.st-app-result:nth-child(1) .st-app-result__title", "css:finder"],
+        ["xpath=//div[@id='nr-search-app']/div/div[2]/div/a/div", "xpath:idRelative"],
+        ["xpath=//div[2]/div/a/div", "xpath:position"]
+      ],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "56de0e12-c4e1-4bda-a6d8-9aad8c82bd74",
+    "name": "New Relic Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["ddc74f91-d977-4ad7-bb67-579d5aef4fd1"]
+  }],
+  "urls": ["https://newrelic.com/"],
+  "plugins": []
+}

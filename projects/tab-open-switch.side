@@ -1,0 +1,99 @@
+{
+  "id": "7742d970-d819-4a86-b42b-cf75e4469fb2",
+  "version": "2.0",
+  "name": "tab-open",
+  "url": "http://the-internet.herokuapp.com",
+  "tests": [{
+    "id": "31fdb487-981c-44c0-b906-f6d342981738",
+    "name": "tab-open-switch",
+    "commands": [{
+      "id": "e21d8b8a-b888-4f18-aa00-6d7aa9c196f7",
+      "comment": "",
+      "command": "open",
+      "target": "/windows",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "3f88851f-7902-4363-a338-ba005b6f7a4a",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1673x1483",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "9d6adcb0-6163-4a14-96ac-151286d34c7f",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Click Here",
+      "targets": [
+        ["linkText=Click Here", "linkText"],
+        ["css=a:nth-child(2)", "css:finder"],
+        ["xpath=//a[contains(text(),'Click Here')]", "xpath:link"],
+        ["xpath=//div[@id='content']/div/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/windows/new')]", "xpath:href"],
+        ["xpath=//div/div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Click Here')]", "xpath:innerText"]
+      ],
+      "value": "",
+      "opensWindow": true,
+      "windowHandleName": "win8030",
+      "windowTimeout": 2000
+    }, {
+      "id": "90d92fae-e390-4b8b-acab-d2168bafdf5d",
+      "comment": "",
+      "command": "storeWindowHandle",
+      "target": "root",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "298b73af-651f-4dbc-90ca-e9146de215d2",
+      "comment": "",
+      "command": "selectWindow",
+      "target": "handle=${win8030}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "deb20126-49b5-47a1-83b2-8d76ec882d24",
+      "comment": "",
+      "command": "selectWindow",
+      "target": "handle=${root}",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "6f8af1f9-8ac0-4b68-a399-fdb83fcbf774",
+      "comment": "",
+      "command": "click",
+      "target": "linkText=Click Here",
+      "targets": [
+        ["linkText=Click Here", "linkText"],
+        ["css=a:nth-child(2)", "css:finder"],
+        ["xpath=//a[contains(text(),'Click Here')]", "xpath:link"],
+        ["xpath=//div[@id='content']/div/a", "xpath:idRelative"],
+        ["xpath=//a[contains(@href, '/windows/new')]", "xpath:href"],
+        ["xpath=//div/div/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Click Here')]", "xpath:innerText"]
+      ],
+      "value": "",
+      "opensWindow": true,
+      "windowHandleName": "win9465",
+      "windowTimeout": 2000
+    }, {
+      "id": "cd9be713-cb88-4369-9bb1-a53b3daf15c5",
+      "comment": "",
+      "command": "selectWindow",
+      "target": "handle=${win9465}",
+      "targets": [],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "e1b1afee-8a83-4e67-8f3b-cde7d28421a0",
+    "name": "Tab Open Swtich",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["31fdb487-981c-44c0-b906-f6d342981738"]
+  }],
+  "urls": ["http://the-internet.herokuapp.com/"],
+  "plugins": []
+}
