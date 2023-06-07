@@ -1,4 +1,4 @@
-// import { HookFunctionInputs } from 'side-code-export'
+import { HookFunctionInputs } from "side-code-export";
 
 const emitters = {
   afterAll,
@@ -10,12 +10,12 @@ const emitters = {
   declareVariables,
   inEachBegin: empty,
   inEachEnd: empty,
-}
+};
 
-export default emitters
+export default emitters;
 
 function afterAll() {
-  const params = {
+  const params: HookFunctionInputs = {
     startingSyntax: {
       commands: [],
     },
@@ -23,24 +23,24 @@ function afterAll() {
       commands: [],
     },
     registrationLevel: 1,
-  }
-  return params
+  };
+  return params;
 }
 
 function afterEach() {
-  const params = {
+  const params: HookFunctionInputs = {
     startingSyntax: {
       commands: [],
     },
     endingSyntax: {
       commands: [],
     },
-  }
-  return params
+  };
+  return params;
 }
 
 function beforeAll() {
-  const params = {
+  const params: HookFunctionInputs = {
     startingSyntax: {
       commands: [],
     },
@@ -48,25 +48,29 @@ function beforeAll() {
       commands: [],
     },
     registrationLevel: 1,
-  }
-  return params
+  };
+  return params;
 }
 
 function beforeEach() {
-  const params = {
+  const params: HookFunctionInputs = {
     startingSyntax: {
-      commands: [],
+      commands: [
+        {
+          level: 0,
+          statement: `// beforeEach`,
+        },
+      ],
     },
     endingSyntax: {
       commands: [],
     },
-    registrationLevel: 1,
-  }
-  return params
+  };
+  return params;
 }
 
 function declareDependencies() {
-  const params = {
+  const params: HookFunctionInputs = {
     startingSyntax: {
       commands: [
         {
@@ -75,28 +79,32 @@ function declareDependencies() {
         },
       ],
     },
-  }
-  return params
+  };
+  return params;
 }
 
 function declareVariables() {
-  const params = {
+  const params: HookFunctionInputs = {
     startingSyntax: {
       commands: [
         {
           level: 0,
-          statement: `// variables go here
-            const By = $selenium.By;
-            const until = $selenium.until;
-            const vars = new Map();
-          `.replace(/^ +/gm, ''), // remove all spaces so that the indentation is correct
+          statement: `const By = $selenium.By;`,
+        },
+        {
+          level: 0,
+          statement: `const until = $selenium.until;`,
+        },
+        {
+          level: 0,
+          statement: `const vars = new Map();`,
         },
       ],
     },
-  }
-  return params
+  };
+  return params;
 }
 
 function empty() {
-  return {}
+  return {};
 }

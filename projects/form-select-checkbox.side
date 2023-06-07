@@ -8,21 +8,21 @@
     "name": "Selenium test page",
     "commands": [{
       "id": "b68481f8-6eb8-4493-ae07-783b6f566ffc",
-      "comment": "",
+      "comment": "Open window",
       "command": "open",
       "target": "/selenium/testpage/",
       "targets": [],
       "value": ""
     }, {
       "id": "12784d69-c5ef-4f5a-921f-e8aca3bf8e50",
-      "comment": "",
+      "comment": "Set window size",
       "command": "setWindowSize",
       "target": "1680x940",
       "targets": [],
       "value": ""
     }, {
       "id": "27c7abda-b39e-437b-ab67-07e1edc4a1c1",
-      "comment": "",
+      "comment": "Press first name",
       "command": "click",
       "target": "id=firstname",
       "targets": [
@@ -35,7 +35,7 @@
       "value": ""
     }, {
       "id": "f107b808-4b30-4a1c-aa01-63a864764b2f",
-      "comment": "",
+      "comment": "Type first name",
       "command": "type",
       "target": "id=firstname",
       "targets": [
@@ -48,7 +48,7 @@
       "value": "Bob"
     }, {
       "id": "a5f9e17c-ab5f-4698-9e8c-acad882bf328",
-      "comment": "",
+      "comment": "Type surname",
       "command": "type",
       "target": "id=surname",
       "targets": [
@@ -61,7 +61,7 @@
       "value": "Sapp"
     }, {
       "id": "f58a7a8e-316b-4255-a6c3-112cdccaaf0e",
-      "comment": "",
+      "comment": "Click gender",
       "command": "click",
       "target": "id=gender",
       "targets": [
@@ -74,14 +74,14 @@
       "value": ""
     }, {
       "id": "d052f7af-d01f-4d84-8337-88f5e42ef8ea",
-      "comment": "",
+      "comment": "Click select",
       "command": "select",
       "target": "id=gender",
       "targets": [],
       "value": "label=My Business!"
     }, {
       "id": "ef17f22a-8de2-4dcc-b6bb-ecbd6592f23c",
-      "comment": "",
+      "comment": "Click id=blue",
       "command": "click",
       "target": "id=blue",
       "targets": [
@@ -94,7 +94,7 @@
       "value": ""
     }, {
       "id": "db1428d8-4817-4955-93a1-36b097c48238",
-      "comment": "",
+      "comment": "Click textarea",
       "command": "click",
       "target": "css=textarea",
       "targets": [
@@ -105,7 +105,7 @@
       "value": ""
     }, {
       "id": "b18923b2-7cdc-4d61-b335-443c2e6ba412",
-      "comment": "",
+      "comment": "Type into textarea",
       "command": "type",
       "target": "css=textarea",
       "targets": [
@@ -155,7 +155,7 @@
       "value": "125.5,71.1015625"
     }, {
       "id": "0249c6bd-cf95-45cc-8867-27be6c4d6d64",
-      "comment": "",
+      "comment": "Select from dropdown",
       "command": "addSelection",
       "target": "id=continent",
       "targets": [
