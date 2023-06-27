@@ -107,11 +107,11 @@ export const testSummary = (withLogger: boolean) =>
 if (FAILED_STEPS.length > 0) {
   console.log(
     \`========[ JOURNEY END ]========
-    Journey failed: ${FAILED_STEPS.length} soft failures detected:\`
+    Journey failed: \${FAILED_STEPS.length} soft failures detected:\`
   );
   console.log(FAILED_STEPS);
   assert.fail(
-    \`Journey failed: There were ${FAILED_STEPS.length} soft step failures.\`
+    \`Journey failed: There were \${FAILED_STEPS.length} soft step failures.\`
   );
 } else {
   console.log(
@@ -134,12 +134,12 @@ export const terminateSuite = (withLogger: boolean) =>
   console.log(HARD_FAILURE);
   if (FAILED_STEPS.length > 0) {
     console.log(
-      \`There were also ${FAILED_STEPS.length} soft step failures:\`
+      \`There were also \${FAILED_STEPS.length} soft step failures:\`
     );
     console.log(FAILED_STEPS);
   }
   assert.fail(
-    \`Journey failed: There was a hard step failure and ${FAILED_STEPS.length} soft step failures.\`
+    \`Journey failed: There was a hard step failure and \${FAILED_STEPS.length} soft step failures.\`
   );
 }
   `

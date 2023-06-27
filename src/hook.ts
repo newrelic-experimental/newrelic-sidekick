@@ -101,6 +101,10 @@ function declareVariables() {
           level: 0,
           statement: `const vars = new Map();`,
         },
+        {
+          level: 0,
+          statement: `const TIMEOUT = 3000;`,
+        },
       ],
     },
   };

@@ -172,7 +172,7 @@ const emitCheck = async (
       level: 0,
       statement: `const element = await $webDriver.wait(until.elementLocated(${await location.emit(
         locator
-      )}))`,
+      )}), TIMEOUT)`,
     },
     {
       level: 0,
@@ -232,7 +232,7 @@ const emitClick = async (
       level: 0,
       statement: `await $webDriver.wait(until.elementLocated(${await location.emit(
         target
-      )})).click()`,
+      )}), TIMEOUT).click()`,
     },
   ];
 
@@ -265,7 +265,7 @@ const emitDoubleClick = async (
       level: 0,
       statement: `const element = await $webDriver.wait(until.elementLocated(${await location.emit(
         target
-      )}))`,
+      )}), TIMEOUT)`,
     },
     {
       level: 0,
@@ -292,13 +292,13 @@ const emitDragAndDrop = async (
       level: 0,
       statement: `const dragged = await $webDriver.wait(until.elementLocated(${await location.emit(
         dragged
-      )}))`,
+      )}), TIMEOUT)`,
     },
     {
       level: 0,
       statement: `const dropped = await $webDriver.wait(until.elementLocated(${await location.emit(
         dropped
-      )}))`,
+      )}), TIMEOUT)`,
     },
     {
       level: 0,
@@ -341,7 +341,7 @@ const emitEditContent = async (
       level: 0,
       statement: `const element = await $webDriver.wait(until.elementLocated(${await location.emit(
         locator
-      )}))`,
+      )}), TIMEOUT)`,
     },
     {
       level: 0,
@@ -370,9 +370,9 @@ const emitExecuteScript = async (
   const scriptString = script.script.replace(/`/g, "\\`");
   const command = {
     level: 0,
-    statement: `await $webDriver.executeScript("${scriptString}"${generateScriptArguments(
+    statement: `await $webDriver.wait($webDriver.executeScript("${scriptString}"${generateScriptArguments(
       script
-    )})`,
+    )}), TIMEOUT)`,
   };
 
   const variableSetCommand = {
@@ -447,7 +447,7 @@ const emitSelect = async (
       level: 1,
       statement: `const dropdown = await $webDriver.wait(until.elementLocated(${await location.emit(
         selectElement
-      )}))`,
+      )}), TIMEOUT)`,
     },
     {
       level: 1,
@@ -491,7 +491,7 @@ const emitSelectFrame = async (
         level: 0,
         statement: `const frame = await $webDriver.wait(until.elementLocated(${await location.emit(
           frameLocation
-        )}))`,
+        )}), TIMEOUT)`,
       },
       {
         level: 0,
@@ -615,7 +615,7 @@ const emitType = async (
       level: 0,
       statement: `await $webDriver.wait(until.elementLocated(${await location.emit(
         target
-      )})).sendKeys(${generateSendKeysInput(value)})`,
+      )}), TIMEOUT).sendKeys(${generateSendKeysInput(value)})`,
     },
   ];
   const withLogger = await generateLoggerCommands(
