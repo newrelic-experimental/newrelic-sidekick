@@ -19,7 +19,7 @@
   },
   "main": "dist/index.js",
   "dependencies": {
-    "side-code-export": "^4.0.0-alpha.6"
+    "side-code-export": "^4.0.0-alpha.7"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.22.4",

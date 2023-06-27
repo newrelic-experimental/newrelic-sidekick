@@ -1,4 +1,6 @@
 import { HookFunctionInputs } from "side-code-export";
+import { testDeclaration } from "./utils";
+import { withLogger } from "./index";
 
 const emitters = {
   afterAll,
@@ -58,7 +60,7 @@ function beforeEach() {
       commands: [
         {
           level: 0,
-          statement: `// beforeEach`,
+          statement: testDeclaration(withLogger),
         },
       ],
     },
@@ -75,7 +77,7 @@ function declareDependencies() {
       commands: [
         {
           level: 0,
-          statement: `// dependencies go here`,
+          statement: `const assert = require('assert');`,
         },
       ],
     },

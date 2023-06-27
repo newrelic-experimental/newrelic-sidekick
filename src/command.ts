@@ -2,6 +2,7 @@ import {
   EmitterContext,
   codeExport as exporter,
   ExportFlexCommandShape,
+  ExportCommandShape,
   PrebuildEmitter,
   ProcessedCommandEmitter,
   ScriptShape,
@@ -9,14 +10,31 @@ import {
 import { CommandShape } from "@seleniumhq/side-model";
 import location from "./location";
 import selection from "./selection";
+import { generateLoggerCommands } from "./utils";
 
 const variableSetter = (varName: string, value: string) =>
   varName ? `vars["${varName}"] = ${value}` : "";
 
-const emitStoreWindowHandle = async (varName: string) =>
-  Promise.resolve(
-    variableSetter(varName, "await $webDriver.getWindowHandle()")
+const emitStoreWindowHandle = async (
+  varName: string,
+  _value: unknown,
+  context: EmitterContext
+) => {
+  const commands = [
+    {
+      level: 0,
+      statement: variableSetter(varName, "await $webDriver.getWindowHandle()"),
+    },
+  ];
+
+  const withLogger = await generateLoggerCommands(
+    `Store window handle ${varName}`,
+    commands,
+    context
   );
+
+  return Promise.resolve({ commands: withLogger });
+};
 
 const emitWaitForWindow = async () => {
   const generateMethodDeclaration = (name: string) => {
@@ -53,23 +71,80 @@ const emitWaitForWindow = async () => {
 
 const emitNewWindowHandling = async (
   command: CommandShape,
-  emittedCommand: ExportFlexCommandShape
-) =>
-  Promise.resolve(
-    `vars["windowHandles"] = await $webDriver.getAllWindowHandles()\n${await emittedCommand}\nvars["${
-      command.windowHandleName
-    }"] = await waitForWindow(${command.windowTimeout})`
+  emittedCommand: ExportFlexCommandShape,
+  context: EmitterContext
+) => {
+  let commandString = "";
+  if (typeof emittedCommand === "string") {
+    commandString = `${emittedCommand.replace(/\n/g, "\n")}`;
+    // @ts-ignore
+  } else if (emittedCommand.commands) {
+    // @ts-ignore
+    commandString = emittedCommand.commands
+      .map(
+        (cmd: ExportCommandShape) =>
+          // @ts-ignore
+          `${cmd.statement.replace(/\n/g, "\n")}`
+      )
+      .join("\n");
+  }
+
+  const cmd = `vars["windowHandles"] = await $webDriver.getAllWindowHandles()\n${await commandString}\nvars["${
+    command.windowHandleName
+  }"] = await waitForWindow(${command.windowTimeout})`;
+
+  const withLogger = await generateLoggerCommands(
+    `Emit New Window on ${command.command}`,
+    [{ level: 1, statement: cmd }],
+    context
   );
 
-const emitAssert = async (varName: string, value: string) =>
-  Promise.resolve(`assert(vars["${varName}"].toString() == "${value}")`);
+  return Promise.resolve({ commands: withLogger });
+};
 
-const emitAssertAlert = async (alertText: string) =>
-  Promise.resolve(
-    `assert(await $webDriver.switchTo().alert().getText() == "${alertText}")`
+const emitAssert = async (
+  varName: string,
+  value: string,
+  context: EmitterContext
+) => {
+  const commands = [
+    {
+      level: 0,
+      statement: `assert(vars["${varName}"].toString() == "${value}")`,
+    },
+  ];
+  const withLogger = await generateLoggerCommands(
+    `Assert ${varName} equals ${value}`,
+    commands,
+    context
   );
+  return Promise.resolve({ commands: withLogger });
+};
 
-const emitAnswerOnNextPrompt = async (answer: string) => {
+const emitAssertAlert = async (
+  alertText: string,
+  _value: unknown,
+  context: EmitterContext
+) => {
+  const commands = [
+    {
+      level: 0,
+      statement: `assert(await $webDriver.switchTo().alert().getText() == "${alertText}")`,
+    },
+  ];
+  const withLogger = await generateLoggerCommands(
+    `Assert alert text equals ${alertText}`,
+    commands,
+    context
+  );
+  return Promise.resolve({ commands: withLogger });
+};
+
+const emitAnswerOnNextPrompt = async (
+  answer: string,
+  _value: unknown,
+  context: EmitterContext
+) => {
   const commands = [
     {
       level: 0,
@@ -78,10 +153,20 @@ const emitAnswerOnNextPrompt = async (answer: string) => {
     { level: 0, statement: `await alert().sendKeys("${answer}")` },
     { level: 0, statement: "await alert().accept()" },
   ];
-  return Promise.resolve({ commands });
+
+  const withLogger = await generateLoggerCommands(
+    `Answer on next prompt ${answer}`,
+    commands,
+    context
+  );
+  return Promise.resolve({ commands: withLogger });
 };
 
-const emitCheck = async (locator: string) => {
+const emitCheck = async (
+  locator: string,
+  _value: unknown,
+  context: EmitterContext
+) => {
   const commands = [
     {
       level: 0,
@@ -95,25 +180,86 @@ const emitCheck = async (locator: string) => {
     },
   ];
 
-  return Promise.resolve({ commands });
+  const withLogger = await generateLoggerCommands(
+    `Check ${locator}`,
+    commands,
+    context
+  );
+  return Promise.resolve({ commands: withLogger });
 };
 
-const emitChooseCancelOnNextConfirmation = async () =>
-  Promise.resolve(`await $webDriver.switchTo().alert().dismiss()`);
+const emitChooseCancelOnNextConfirmation = async (
+  _: unknown,
+  _value: unknown,
+  context: EmitterContext
+) => {
+  const commands = [
+    { level: 0, statement: `await $webDriver.switchTo().alert().dismiss()` },
+  ];
 
-const emitChooseOkOnNextConfirmation = async () =>
-  Promise.resolve(`await $webDriver.switchTo().alert().accept()`);
-
-const emitClick = async (target: string) =>
-  Promise.resolve(
-    `await $webDriver.wait(until.elementLocated(${await location.emit(
-      target
-    )})).click()`
+  const withLogger = await generateLoggerCommands(
+    `Choose cancel on next confirmation`,
+    commands,
+    context
   );
+  return Promise.resolve({ commands: withLogger });
+};
 
-const emitClose = async () => Promise.resolve(`await $webDriver.close()`);
+const emitChooseOkOnNextConfirmation = async (
+  _: unknown,
+  _value: unknown,
+  context: EmitterContext
+) => {
+  const commands = [
+    { level: 0, statement: `await $webDriver.switchTo().alert().accept()` },
+  ];
 
-const emitDoubleClick = async (target: string) => {
+  const withLogger = await generateLoggerCommands(
+    `Choose OK on next confirmation`,
+    commands,
+    context
+  );
+  return Promise.resolve({ commands: withLogger });
+};
+
+const emitClick = async (
+  target: string,
+  _value: unknown,
+  context: EmitterContext
+) => {
+  const commands = [
+    {
+      level: 0,
+      statement: `await $webDriver.wait(until.elementLocated(${await location.emit(
+        target
+      )})).click()`,
+    },
+  ];
+
+  const withLogger = await generateLoggerCommands(
+    `Click ${target}`,
+    commands,
+    context
+  );
+  return Promise.resolve({ commands: withLogger });
+};
+
+const emitClose = async (
+  _: unknown,
+  _value: unknown,
+  context: EmitterContext
+) => {
+  const commands = [{ level: 0, statement: `await $webDriver.close()` }];
+
+  const withLogger = await generateLoggerCommands(`Close`, commands, context);
+  return Promise.resolve({ commands: withLogger });
+};
+
+const emitDoubleClick = async (
+  target: string,
+  _value: unknown,
+  context: EmitterContext
+) => {
   const commands = [
     {
       level: 0,
@@ -127,10 +273,20 @@ const emitDoubleClick = async (target: string) => {
         "await $webDriver.actions({ bridge: true }).doubleClick(element).perform()",
     },
   ];
-  return Promise.resolve({ commands });
+
+  const withLogger = await generateLoggerCommands(
+    `Double click ${target}`,
+    commands,
+    context
+  );
+  return Promise.resolve({ commands: withLogger });
 };
 
-const emitDragAndDrop = async (dragged: string, dropped: string) => {
+const emitDragAndDrop = async (
+  dragged: string,
+  dropped: string,
+  context: EmitterContext
+) => {
   const commands = [
     {
       level: 0,
@@ -150,15 +306,36 @@ const emitDragAndDrop = async (dragged: string, dropped: string) => {
         "await $webDriver.actions().dragAndDrop(dragged, dropped).perform()",
     },
   ];
-  return Promise.resolve({ commands });
+
+  const withLogger = await generateLoggerCommands(
+    `Drag and drop from ${dragged} to ${dropped}`,
+    commands,
+    context
+  );
+  return Promise.resolve({ commands: withLogger });
 };
 
-const emitEcho = (message: string) => {
+const emitEcho = async (
+  message: string,
+  _value: unknown,
+  context: EmitterContext
+) => {
   const _message = message.startsWith("vars[") ? message : `"${message}"`;
-  return Promise.resolve(`console.log(${_message})`);
+  const commands = [{ level: 0, statement: `console.log(${_message})` }];
+
+  const withLogger = await generateLoggerCommands(
+    `Echo ${message}`,
+    commands,
+    context
+  );
+  return Promise.resolve({ commands: withLogger });
 };
 
-const emitEditContent = async (locator: string, content: string) => {
+const emitEditContent = async (
+  locator: string,
+  content: string,
+  context: EmitterContext
+) => {
   const commands = [
     {
       level: 0,
@@ -171,7 +348,13 @@ const emitEditContent = async (locator: string, content: string) => {
       statement: `await $webDriver.executeScript("if(arguments[0].contentEditable === 'true') { arguments[0].innerText = '${content}'; }", element)`,
     },
   ];
-  return Promise.resolve({ commands });
+
+  const withLogger = await generateLoggerCommands(
+    `Edit content ${locator}`,
+    commands,
+    context
+  );
+  return Promise.resolve({ commands: withLogger });
 };
 
 const generateScriptArguments = (script: ScriptShape) =>
@@ -179,31 +362,85 @@ const generateScriptArguments = (script: ScriptShape) =>
     .map((varName) => `vars["${varName}"]`)
     .join(",")}`;
 
-const emitExecuteScript = async (script: ScriptShape, varName: string) => {
+const emitExecuteScript = async (
+  script: ScriptShape,
+  varName: string,
+  context: EmitterContext
+) => {
   const scriptString = script.script.replace(/`/g, "\\`");
-  const result = `await $webDriver.executeScript("${scriptString}"${generateScriptArguments(
-    script
-  )})`;
+  const command = {
+    level: 0,
+    statement: `await $webDriver.executeScript("${scriptString}"${generateScriptArguments(
+      script
+    )})`,
+  };
 
-  return Promise.resolve(variableSetter(varName, result));
-};
+  const variableSetCommand = {
+    level: 0,
+    statement: variableSetter(varName, command.statement),
+  };
 
-const emitExecuteAsyncScript = async (script: ScriptShape, varName: string) => {
-  const result = `await $webDriver.executeAsyncScript("const callback = arguments[arguments.length - 1]; ${
-    script.script
-  }.then(callback).catch(callback);"${generateScriptArguments(script)}")`;
-
-  return Promise.resolve(variableSetter(varName, result));
-};
-
-const emitSetWindowSize = async (size: string) => {
-  const [width, height] = size.split("x");
-  return Promise.resolve(
-    `await $webDriver.manage().window().setRect({ width: ${width}, height: ${height} })`
+  const withLogger = await generateLoggerCommands(
+    `Execute script ${varName}`,
+    [variableSetCommand],
+    context
   );
+
+  return Promise.resolve({ commands: withLogger });
 };
 
-const emitSelect = async (selectElement: string, option: string) => {
+const emitExecuteAsyncScript = async (
+  script: ScriptShape,
+  varName: string,
+  context: EmitterContext
+) => {
+  const command = {
+    level: 0,
+    statement: `await $webDriver.executeAsyncScript("const callback = arguments[arguments.length - 1]; ${
+      script.script
+    }.then(callback).catch(callback);"${generateScriptArguments(script)})`,
+  };
+
+  const variableSetCommand = {
+    level: 0,
+    statement: variableSetter(varName, command.statement),
+  };
+
+  const withLogger = await generateLoggerCommands(
+    `Execute async script ${varName}`,
+    [variableSetCommand],
+    context
+  );
+
+  return Promise.resolve({ commands: withLogger });
+};
+
+const emitSetWindowSize = async (
+  size: string,
+  _value: unknown,
+  context: EmitterContext
+) => {
+  const [width, height] = size.split("x");
+  const commands = [
+    {
+      level: 0,
+      statement: `await $webDriver.manage().window().setRect({ width: ${width}, height: ${height} })`,
+    },
+  ];
+
+  const withLogger = await generateLoggerCommands(
+    `Set window size w:${width} h:${height}`,
+    commands,
+    context
+  );
+  return Promise.resolve({ commands: withLogger });
+};
+
+const emitSelect = async (
+  selectElement: string,
+  option: string,
+  context: EmitterContext
+) => {
   const commands = [
     { level: 0, statement: `{` },
     {
@@ -220,76 +457,112 @@ const emitSelect = async (selectElement: string, option: string) => {
     },
     { level: 0, statement: `}` },
   ];
-  return Promise.resolve({ commands });
+
+  const withLogger = await generateLoggerCommands(
+    `Select ${option} from ${selectElement}`,
+    commands,
+    context
+  );
+  return Promise.resolve({ commands: withLogger });
 };
 
-const emitSelectFrame = async (frameLocation: string) => {
+const emitSelectFrame = async (
+  frameLocation: string,
+  _value: unknown,
+  context: EmitterContext
+) => {
+  let commands = [];
   if (frameLocation === "relative=top" || frameLocation === "relative=parent") {
-    return Promise.resolve(`await $webDriver.switchTo().defaultContent()`);
+    commands = [
+      { level: 0, statement: `await $webDriver.switchTo().defaultContent()` },
+    ];
   } else if (/^index=/.test(frameLocation)) {
-    return Promise.resolve(
-      `await $webDriver.switchTo().frame(${Math.floor(
-        Number(frameLocation.split("index=")?.[1])
-      )})`
-    );
+    commands = [
+      {
+        level: 0,
+        statement: `await $webDriver.switchTo().frame(${Math.floor(
+          Number(frameLocation.split("index=")?.[1])
+        )})`,
+      },
+    ];
   } else {
-    return Promise.resolve({
-      commands: [
-        {
-          level: 0,
-          statement: `const frame = await $webDriver.wait(until.elementLocated(${await location.emit(
-            frameLocation
-          )}))`,
-        },
-        {
-          level: 0,
-          statement: `await $webDriver.switchTo().frame(frame)`,
-        },
-      ],
-    });
+    commands = [
+      {
+        level: 0,
+        statement: `const frame = await $webDriver.wait(until.elementLocated(${await location.emit(
+          frameLocation
+        )}))`,
+      },
+      {
+        level: 0,
+        statement: `await $webDriver.switchTo().frame(frame)`,
+      },
+    ];
   }
+  const withLogger = await generateLoggerCommands(
+    `Select frame ${frameLocation}`,
+    commands,
+    context
+  );
+  return Promise.resolve({ commands: withLogger });
 };
 
-const emitSelectWindow = async (windowLocation: string) => {
+const emitSelectWindow = async (
+  windowLocation: string,
+  _value: unknown,
+  context: EmitterContext
+) => {
+  let commands = [];
   if (/^handle=/.test(windowLocation)) {
-    return Promise.resolve(
-      `await $webDriver.switchTo().window(${
-        windowLocation.split("handle=")?.[1]
-      })`
-    );
+    commands = [
+      {
+        level: 0,
+        statement: `await $webDriver.switchTo().window(${
+          windowLocation.split("handle=")?.[1]
+        })`,
+      },
+    ];
   } else if (/^name=/.test(windowLocation)) {
-    return Promise.resolve(
-      `await $webDriver.switchTo().window(${
-        windowLocation.split("name=")?.[1]
-      })`
-    );
+    commands = [
+      {
+        level: 0,
+        statement: `await $webDriver.switchTo().window(${
+          windowLocation.split("name=")?.[1]
+        })`,
+      },
+    ];
   } else if (/^win_ser_/.test(windowLocation)) {
     if (windowLocation === "win_ser_local") {
-      return Promise.resolve({
-        commands: [
-          {
-            level: 0,
-            statement:
-              "await $webDriver.switchTo().window(await $webDriver.getWindowHandle()[0])",
-          },
-        ],
-      });
+      commands = [
+        {
+          level: 0,
+          statement:
+            "await $webDriver.switchTo().window(await $webDriver.getWindowHandle()[0])",
+        },
+      ];
     } else {
       const index = parseInt(windowLocation.substr("win_ser_".length));
-      return Promise.resolve({
-        commands: [
-          {
-            level: 0,
-            statement: `await $webDriver.switchTo().window(await $webDriver.getAllWindowHandles()[${index}])`,
-          },
-        ],
-      });
+      commands = [
+        {
+          level: 0,
+          statement: `await $webDriver.switchTo().window(await $webDriver.getAllWindowHandles()[${index}])`,
+        },
+      ];
     }
   } else {
     return Promise.reject(
       new Error(`Can only emit "select window" for window handles`)
     );
   }
+  const withLogger = await generateLoggerCommands(
+    `Select window ${windowLocation}`.replace(
+      /"([^"]+)"/,
+      (_, group1) => group1
+    ),
+    commands,
+    context
+  );
+  return Promise.resolve({ commands: withLogger });
 };
 
 const emitOpen = async (
@@ -300,7 +573,13 @@ const emitOpen = async (
   const url = /^(file|http|https):\/\//.test(target)
     ? target
     : `${context.project.url}${target}`;
-  return Promise.resolve(`await $webDriver.get("${url}")`);
+  const commands = [{ level: 0, statement: `await $webDriver.get("${url}")` }];
+  const withLogger = await generateLoggerCommands(
+    `Open ${url}`,
+    commands,
+    context
+  );
+  return Promise.resolve({ commands: withLogger });
 };
 
 const generateSendKeysInput = (value: string | string[]) => {
@@ -326,12 +605,25 @@ const generateSendKeysInput = (value: string | string[]) => {
   }
 };
 
-const emitType = async (target: string, value: string) => {
-  return Promise.resolve(
-    `await $webDriver.wait(until.elementLocated(${await location.emit(
-      target
-    )})).sendKeys(${generateSendKeysInput(value)})`
+const emitType = async (
+  target: string,
+  value: string,
+  context: EmitterContext
+) => {
+  const commands = [
+    {
+      level: 0,
+      statement: `await $webDriver.wait(until.elementLocated(${await location.emit(
+        target
+      )})).sendKeys(${generateSendKeysInput(value)})`,
+    },
+  ];
+  const withLogger = await generateLoggerCommands(
+    `Type ${value} into ${target}`,
+    commands,
+    context
   );
+  return Promise.resolve({ commands: withLogger });
 };
 
 const variableLookup = (varName: string) => {
