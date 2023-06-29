@@ -55,12 +55,7 @@ function beforeAll() {
 function beforeEach() {
   const params: HookFunctionInputs = {
     startingSyntax: {
-      commands: [
-        {
-          level: 0,
-          statement: `// beforeEach`,
-        },
-      ],
+      commands: [],
     },
     endingSyntax: {
       commands: [],
@@ -75,7 +70,7 @@ function declareDependencies() {
       commands: [
         {
           level: 0,
-          statement: `// dependencies go here`,
+          statement: `const assert = require('assert');`,
         },
       ],
     },
@@ -98,6 +93,10 @@ function declareVariables() {
         {
           level: 0,
           statement: `const vars = new Map();`,
+        },
+        {
+          level: 0,
+          statement: `const TIMEOUT = 3000;`,
         },
       ],
     },
