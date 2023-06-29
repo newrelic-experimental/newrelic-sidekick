@@ -18,7 +18,7 @@ interface Configuration {
 
 const [, , ...args] = process.argv;
 
-if (args.length < 1) {
+if (args.length == 0) {
   console.error("Error: No arguments provided.");
   console.log("Usage: sidekick <input.side> <output_directory>");
   process.exit(1); // Exit with a failure code
