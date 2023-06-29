@@ -85,12 +85,19 @@ const timedStep = async (
 export const logger = (withLogger: boolean) =>
   withLogger
     ? `
+// A global start timer
 const globalStartTime = Date.now();
+// Step type definitions
 const STEP_TYPE = { HARD: "HARD", SOFT: "SOFT", OPTIONAL: "OPTIONAL" };
-let STEP = 1; // A global indicator of number of steps
-let CATEGORY_STEP = {}; //A counter of steps per category
-let FAILED_STEPS = []; //A record of failed soft steps
+// A global indicator of number of steps
+let STEP = 1;
+// A counter of steps per category
+let CATEGORY_STEP = {};
+// A record of failed soft steps
+let FAILED_STEPS = [];
+// A hard failure message
 let HARD_FAILURE = "";
+
 const stepLogger = ${timedStep.toString()}`
     : "";
 

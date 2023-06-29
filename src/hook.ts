@@ -1,6 +1,4 @@
 import { HookFunctionInputs } from "side-code-export";
-import { testDeclaration } from "./utils";
-import { withLogger } from "./index";
 
 const emitters = {
   afterAll,
@@ -57,12 +55,7 @@ function beforeAll() {
 function beforeEach() {
   const params: HookFunctionInputs = {
     startingSyntax: {
-      commands: [
-        {
-          level: 0,
-          statement: testDeclaration(withLogger),
-        },
-      ],
+      commands: [],
     },
     endingSyntax: {
       commands: [],
