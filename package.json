@@ -1,13 +1,20 @@
 {
-  "name": "code-export-js-newrelic-synthetics",
+  "name": "newrelic-sidekick",
   "version": "0.0.3-alpha.1",
   "private": false,
   "description": "Export Selenium IDE project contents to JavaScript New Relic Synthetics",
-  "repository": "https://github.com/SeleniumHQ/selenium-ide",
+  "repository": "https://github.com/@matewilk/newrelic-sidekick.git",
   "keywords": [
     "selenium",
     "ide",
-    "export"
+    "export",
+    "newrelic",
+    "synthetics",
+    "browser",
+    "automation",
+    "testing",
+    "side",
+    "sidekick"
   ],
   "license": "Apache-2.0",
   "scripts": {
@@ -24,6 +31,7 @@
   "bin": {
     "sidekick": "./dist/bin.js"
   },
+  "types": "./dist/index.d.ts",
   "devDependencies": {
     "@babel/preset-env": "^7.22.4",
     "@seleniumhq/side-model": "^4.0.0-alpha.3",
