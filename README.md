@@ -7,7 +7,7 @@
  You can install Sidekick globally using npm:
 
  ```bash
- npm install -g sidekick
+ npm install -g newrelic-sidekick
  ```
 
  ## Usage

@@ -1,6 +1,6 @@
 {
   "name": "newrelic-sidekick",
-  "version": "0.0.3-alpha.1",
+  "version": "0.0.4-alpha.1",
   "private": false,
   "description": "Export Selenium IDE project contents to JavaScript New Relic Synthetics",
   "repository": "https://github.com/@matewilk/newrelic-sidekick.git",
