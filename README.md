@@ -2,6 +2,11 @@
 
  Sidekick is a tool written in Node.js for processing `.side` files. It is designed to work with Selenium IDE projects, allowing you to filter and export your test suites into New Relic Scripted Browser compatible files.
 
+ ## NPM
+
+You can find this package on npm: [newrelic-sidekick](https://www.npmjs.com/package/newrelic-sidekick)
+
+
  ## Installation
 
  You can install Sidekick globally using npm:
