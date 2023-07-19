@@ -6,6 +6,12 @@ import { ProjectShape } from "@seleniumhq/side-model";
 import { correctPluginPaths, loadPlugins } from "@seleniumhq/side-runtime";
 import { fileWriter } from "side-code-export";
 
+const packageJson = fs.readFileSync(
+  path.join(__dirname, "../package.json"),
+  "utf8"
+);
+const { version } = JSON.parse(packageJson);
+
 interface Configuration {
   baseUrl: string;
   debug: boolean;
@@ -17,6 +23,11 @@ interface Configuration {
 }
 
 const [, , ...args] = process.argv;
+
+if (args[0] === "-v" || args[0] === "--version") {
+  console.log(`Sidekick version: ${version}`);
+  process.exit(0); // Exit successfully
+}
 
 if (args.length == 0) {
   console.error("Error: No arguments provided.");
@@ -45,7 +56,7 @@ if (!args[1]) {
   process.exit(1); // Exit with a failure code
 }
 
-const formatPath = "./dist/index.js";
+const formatPath = path.join(__dirname, "index.js");
 const projectPath = args[0];
 const outputDir = args[1];
 
