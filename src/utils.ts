@@ -58,7 +58,7 @@ const timedStep = async (
     const error = err as Error;
     if (type == STEP_TYPE.HARD) {
       console.log(
-        `ERROR! Step ${thisStep}: [${category}:${categoryStep}] -> ${description}'\n ╚══> This is a HARD step error so processing of further steps will cease and the  journey will be failed.`
+        `ERROR! Step ${thisStep}: [${category}:${categoryStep}] -> ${description}\n ╚══> This is a HARD step error so processing of further steps will cease and the  journey will be failed.`
       );
       HARD_FAILURE = `Step ${thisStep}: [${category}:${categoryStep}] -> ${description}`;
       throw error;
