@@ -48,4 +48,4 @@ As noted in our [security policy](https://github.com/newrelic-experimental/newre
 If you believe you have found a security vulnerability in this project or any of New Relic's products or websites, we welcome and greatly appreciate you reporting it to New Relic through [HackerOne](https://hackerone.com/newrelic).
 
 ## License
-New Relic CommerceTools Integration PHP is licensed under the [Apache 2.0](http://apache.org/licenses/LICENSE-2.0.txt) License.
+New Relic SideKick is licensed under the [Apache 2.0](http://apache.org/licenses/LICENSE-2.0.txt) License.
