@@ -58,7 +58,7 @@ const timedStep = async (
     const error = err as Error;
     if (type == STEP_TYPE.HARD) {
       console.log(
-        `ERROR! Step ${thisStep}: [${category}:${categoryStep}] -> ${description}\n ╚══> This is a HARD step error so processing of further steps will cease and the  journey will be failed.`
+        `ERROR! Step ${thisStep}: [${category}:${categoryStep}] -> ${description}\n ╚══> This is a HARD step error so processing of further steps will cease and the journey will be failed.`
       );
       HARD_FAILURE = `Step ${thisStep}: [${category}:${categoryStep}] -> ${description}`;
       throw error;
@@ -134,11 +134,19 @@ export const terminateSuite = (withLogger: boolean) =>
     ? `
 } catch (err) {
   console.log(err.message);
-  console.log(
-    \`========[ JOURNEY END ]========
-    Journey failed: there was a hard step failure.\`
-  );
-  console.log(HARD_FAILURE);
+  // Check if the error is due to a HARD step failure
+  if (HARD_FAILURE.length > 0) {
+    console.log(
+      \`========[ JOURNEY END ]========
+      Journey failed: there was a hard step failure.\`
+    );
+    console.log(HARD_FAILURE);
+  } else {
+    console.log(
+      \`========[ JOURNEY END ]========
+      Journey failed: an unexpected error occurred.\`
+    );
+  }
   if (FAILED_STEPS.length > 0) {
     console.log(
       \`There were also \${FAILED_STEPS.length} soft step failures:\`
@@ -146,7 +154,7 @@ export const terminateSuite = (withLogger: boolean) =>
     console.log(FAILED_STEPS);
   }
   assert.fail(
-    \`Journey failed: There was a hard step failure and \${FAILED_STEPS.length} soft step failures.\`
+    \`Journey failed: \${HARD_FAILURE.length > 0 ? 'There was a hard step failure and ' : ''}\${FAILED_STEPS.length} soft step failures.\`
   );
 }
   `
