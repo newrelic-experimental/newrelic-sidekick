@@ -1,4 +1,8 @@
-import { EmitterContext, ExportCommandShape } from "side-code-export";
+import {
+  EmitterContext,
+  ExportCommandShape,
+  VariableLookup,
+} from "side-code-export";
 
 /* Utility functions */
 
@@ -208,4 +212,21 @@ export const generateLoggerCommands = async (
   ];
 
   return loggerCommands;
+};
+
+export const processEnvVariable = (
+  param: string,
+  variableLookup: VariableLookup
+) => {
+  if (!param) return "";
+  // Adjusted regex to match double quotes and capture the content inside
+  const _var = param.match(/vars\["([^"]+)"\]/);
+  if (_var) {
+    // Perform the variable lookup and format the result
+    // so that the can be added as script variables to location emit
+    const lookupValue = variableLookup(_var[1]);
+    return param.replace(_var[0], `" + ${lookupValue} + "`);
+  } else {
+    return param;
+  }
 };

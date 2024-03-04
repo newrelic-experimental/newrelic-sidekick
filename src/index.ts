@@ -21,6 +21,7 @@ export const opts: LanguageEmitterOpts = {
   fileExtension: ".js",
   commandPrefixPadding: "  ",
   commentPrefix: "//",
+  // @ts-ignore
   logger: withLogger,
   generateMethodDeclaration: function generateMethodDeclaration() {
     return ``;

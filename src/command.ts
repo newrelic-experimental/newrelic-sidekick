@@ -10,7 +10,7 @@ import {
 import { CommandShape } from "@seleniumhq/side-model";
 import location from "./location";
 import selection from "./selection";
-import { generateLoggerCommands } from "./utils";
+import { generateLoggerCommands, processEnvVariable } from "./utils";
 
 const variableSetter = (varName: string, value: string) =>
   varName ? `vars["${varName}"] = ${value}` : "";
@@ -436,11 +436,39 @@ const emitSetWindowSize = async (
   return Promise.resolve({ commands: withLogger });
 };
 
+const emitStoreText = async (
+  locator: string,
+  varName: string,
+  context: EmitterContext
+) => {
+  const commands = [
+    {
+      level: 0,
+      statement: `const element = await $webDriver.wait(until.elementLocated(${await location.emit(
+        locator
+      )}), TIMEOUT)`,
+    },
+    {
+      level: 0,
+      statement: variableSetter(varName, `await element.getText()`),
+    },
+  ];
+
+  const withLogger = await generateLoggerCommands(
+    `Store text from ${locator} into ${varName}`,
+    commands,
+    context
+  );
+  return Promise.resolve({ commands: withLogger });
+};
+
 const emitSelect = async (
   selectElement: string,
   option: string,
   context: EmitterContext
 ) => {
+  const processedOption = processEnvVariable(option, variableLookup);
+
   const commands = [
     { level: 0, statement: `{` },
     {
@@ -452,14 +480,14 @@ const emitSelect = async (
     {
       level: 1,
       statement: `await dropdown.findElement(${await selection.emit(
-        option
+        processedOption as string
       )}).click()`,
     },
     { level: 0, statement: `}` },
   ];
 
   const withLogger = await generateLoggerCommands(
-    `Select ${option} from ${selectElement}`,
+    `Select ${processedOption} from ${selectElement}`,
     commands,
     context
   );
@@ -668,6 +696,7 @@ export const emitters: Record<string, ProcessedCommandEmitter> = {
   selectFrame: emitSelectFrame,
   selectWindow: emitSelectWindow,
   setWindowSize: emitSetWindowSize,
+  storeText: emitStoreText,
   storeWindowHandle: emitStoreWindowHandle,
   type: emitType,
   webdriverAnswerOnVisiblePrompt: emitAnswerOnNextPrompt,
