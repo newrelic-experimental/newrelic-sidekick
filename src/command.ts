@@ -415,6 +415,87 @@ const emitExecuteAsyncScript = async (
   return Promise.resolve({ commands: withLogger });
 };
 
+const emitMouseOver = async (
+  target: string,
+  _value: unknown,
+  context: EmitterContext
+) => {
+  const commands = [
+    {
+      level: 0,
+      statement: `const element = await $webDriver.wait(until.elementLocated(${await location.emit(
+        target
+      )}), TIMEOUT)`,
+    },
+    {
+      level: 0,
+      statement:
+        "await $webDriver.actions().move({ origin: element }).perform()",
+    },
+  ];
+
+  const withLogger = await generateLoggerCommands(
+    `Mouse over ${target}`,
+    commands,
+    context
+  );
+  return Promise.resolve({ commands: withLogger });
+};
+
+const emitMouseUp = async (
+  target: string,
+  _value: unknown,
+  context: EmitterContext
+) => {
+  const commands = [
+    {
+      level: 0,
+      statement: `const element = await $webDriver.wait(until.elementLocated(${await location.emit(
+        target
+      )}), TIMEOUT)`,
+    },
+    {
+      level: 0,
+      statement:
+        "await $webDriver.actions().move({ origin: element }).release().perform()",
+    },
+  ];
+
+  const withLogger = await generateLoggerCommands(
+    `Mouse up ${target}`,
+    commands,
+    context
+  );
+  return Promise.resolve({ commands: withLogger });
+};
+
+const emitMouseDown = async (
+  target: string,
+  _value: unknown,
+  context: EmitterContext
+) => {
+  const commands = [
+    {
+      level: 0,
+      statement: `const element = await $webDriver.wait(until.elementLocated(${await location.emit(
+        target
+      )}), TIMEOUT)`,
+    },
+    {
+      level: 0,
+      statement:
+        "await $webDriver.actions().move({ origin: element }).press().perform()",
+    },
+  ];
+
+  const withLogger = await generateLoggerCommands(
+    `Mouse down ${target}`,
+    commands,
+    context
+  );
+  return Promise.resolve({ commands: withLogger });
+};
+
 const emitSetWindowSize = async (
   size: string,
   _value: unknown,
@@ -691,6 +772,9 @@ export const emitters: Record<string, ProcessedCommandEmitter> = {
   end: skip,
   executeScript: emitExecuteScript,
   executeAsyncScript: emitExecuteAsyncScript,
+  mouseOver: emitMouseOver,
+  mouseUp: emitMouseUp,
+  mouseDown: emitMouseDown,
   removeSelection: emitSelect,
   select: emitSelect,
   selectFrame: emitSelectFrame,
